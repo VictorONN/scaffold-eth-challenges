@@ -3,7 +3,9 @@ pragma solidity 0.8.4;
 import "hardhat/console.sol";
 import "./ExampleExternalContract.sol";
 
-// 0x28f50dd8d51742333c6c86276663956f81956d6d 
+// https://lackadaisical-stone.surge.sh/
+// deployer: 0x28f50dd8d51742333c6c86276663956f81956d6d 
+// https://goerli.etherscan.io/address/0x573b596814deF4CFd3FFAC85Ac52B5c11f2e24a3
 contract Staker {
 
   ExampleExternalContract public exampleExternalContract;
