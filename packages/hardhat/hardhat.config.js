@@ -25,8 +25,8 @@ const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 //
 // Select the network you want to deploy to here:
 //
-// const defaultNetwork = "localhost";
-const defaultNetwork = "goerli";
+const defaultNetwork = "localhost";
+// const defaultNetwork = "goerli";
 
 const mainnetGwei = 115;
 
@@ -68,6 +68,7 @@ module.exports = {
     goerli: {
       url: "https://eth-goerli.g.alchemy.com/v2/1c0dqVuXgo8Wvm2A9bXsA1vLkf1hOiz7", // <---- YOUR INFURA ID! (or it won't work)
       //      url: "https://speedy-nodes-nyc.moralis.io/XXXXXXXXXXXXXXXXXXXXXXXXX/eth/goerli", // <---- YOUR MORALIS ID! (not limited to infura)
+      // gasPrice: 1000000000,
       accounts: {
         mnemonic: mnemonic(),
       },
@@ -231,11 +232,12 @@ module.exports = {
   namedAccounts: {
     deployer: {
       default: 0, // here this will by default take the first account as deployer
+      // default: 0x28f50dd8d51742333c6c86276663956f81956d6d,
     },
   },
   etherscan: {
     // Add your api key here
-    apiKey: "DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW",
+    apiKey: "XV2T3VBTI98MUY96AP83ZRB5SMUQRKRM52",
   },
 };
 

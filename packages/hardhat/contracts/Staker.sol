@@ -4,16 +4,17 @@ pragma solidity 0.8.4;  //Do not change the solidity version as it negativly imp
 import "hardhat/console.sol";
 import "./ExampleExternalContract.sol";
 
+// verifying Staker (0xd35c96fD69243482BAB356a22D5f56d9f94A814B)
 // 0x28f50dd8d51742333c6c86276663956f81956d6d 
 contract Staker {
 
   ExampleExternalContract public exampleExternalContract;
 
-  mapping(address => uint256) public balances;
+  mapping (address => uint256) public balances;
 
   uint256 public constant threshold = 1 ether;
 
-  uint256 public deadline = block.timestamp + 72 hours;
+  uint256 public deadline = block.timestamp + 30 seconds;
 
   bool public openForWithdraw;
 
@@ -30,9 +31,9 @@ contract Staker {
   modifier deadlinePassed( bool requireDeadlinePassed) {
     uint256 timeRemaining = timeLeft();
     if (requireDeadlinePassed) {
-      require(timeRemaining == 0, "Deadline has not passed yet");
+      require(timeRemaining == 0, "Deadline has passed");
     } else {
-      require(timeRemaining > 0, "Deadline is already passed");
+      require(timeRemaining > 0, "Deadline has not passed yet");
     }
     _;
   }
@@ -50,21 +51,20 @@ contract Staker {
 
   //After some `deadline` allow anyone to call an `execute()` function
   // It should either call `exampleExternalContract.complete{value: address(this).balance()` to send all the value
-  function execute() public notCompleted deadlinePassed(false) {
-    require(block.timestamp >= deadline, "Deadline not expired");
+  function execute() public notCompleted deadlinePassed(true) {
     uint256 contractBalance = address(this).balance;
     if (contractBalance >= threshold) {
-      exampleExternalContract.complete{value: address(this).balance}();
+      exampleExternalContract.complete{value: contractBalance}();
       } else {
             openForWithdraw = true;
       } 
   }
  // Add a `withdraw(address payable)` function lets users withdraw their balance
-  function withdraw(address payable depositor) public deadlinePassed(true) notCompleted {
-    // require(openForWithdraw, "Not open for withdraw");
+  function withdraw(address payable depositor) public deadlinePassed(true) {
+    require(openForWithdraw, "Not open for withdraw");
     uint256 userBalance = balances[msg.sender];
      require (userBalance > 0, "User has no deposits");
-     balances[depositor] = 0;
+     balances[msg.sender] = 0;
      (bool success, ) = depositor.call{value: userBalance}("");
      require (success, "Failed to send ether");
   } 
@@ -78,10 +78,9 @@ contract Staker {
    receive() external payable {
       stake();
   }
-// Success! - Published to fretful-tree.surge.sh
-// deploying "Staker" (tx: 0x322a8870cb13d7949707601d3a3095709db4806a636ad39dfca8a2757c1cf3bd)...: 
-// deployed at 0x81a4d72268A0eA6d736b60A9b4f04BbbEfe9daba with 507304 gas
 
 }
+
+
 
 
