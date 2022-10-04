@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.4;  //Do not change the solidity version as it negativly impacts submission grading
-
+pragma solidity 0.8.4;  
 import "hardhat/console.sol";
 import "./ExampleExternalContract.sol";
 
-// verifying Staker (0xd35c96fD69243482BAB356a22D5f56d9f94A814B)
 // 0x28f50dd8d51742333c6c86276663956f81956d6d 
 contract Staker {
 
@@ -14,20 +12,20 @@ contract Staker {
 
   uint256 public constant threshold = 1 ether;
 
-  uint256 public deadline = block.timestamp + 30 seconds;
+  uint256 public deadline = block.timestamp + 72 hours;
 
   bool public openForWithdraw;
 
   event Stake(address staker, uint256 amount);
 
-  // Modifier that checks whether the external contract is completed
+  // checks whether the external contract is completed
   modifier notCompleted() {
     bool completed = exampleExternalContract.completed();
     require(!completed, "Staking period has completed!");
     _;
   }
 
-  // Modifier that checks whether the required deadline has passed
+  // checks whether the required deadline has passed
   modifier deadlinePassed( bool requireDeadlinePassed) {
     uint256 timeRemaining = timeLeft();
     if (requireDeadlinePassed) {
@@ -60,12 +58,12 @@ contract Staker {
       } 
   }
  // Add a `withdraw(address payable)` function lets users withdraw their balance
-  function withdraw(address payable depositor) public deadlinePassed(true) {
+  function withdraw() public deadlinePassed(true) {
     require(openForWithdraw, "Not open for withdraw");
     uint256 userBalance = balances[msg.sender];
      require (userBalance > 0, "User has no deposits");
      balances[msg.sender] = 0;
-     (bool success, ) = depositor.call{value: userBalance}("");
+     (bool success, ) = payable(msg.sender).call{value: userBalance}("");
      require (success, "Failed to send ether");
   } 
 
